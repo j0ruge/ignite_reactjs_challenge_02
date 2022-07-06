@@ -7,40 +7,24 @@ interface GenreResponseProps {
   name: 'action' | 'comedy' | 'documentary' | 'drama' | 'horror' | 'family';
   title: string;
 }
- 
 
+interface SidebarProps {
+  handleClickButton(id: number): void;
+  selectedGenreId: number;
+}
 
-
-export function SideBar(props: GenreResponseProps) {
+export function SideBar({selectedGenreId, handleClickButton }: SidebarProps) {
   const [genres, setGenres] = useState<GenreResponseProps[]>([]);
-  const [selectedGenreId, setSelectedGenreId] = useState(1);
-  const [selectedGenre, setSelectedGenre] = useState<GenreResponseProps>({} as GenreResponseProps);
-
-  function handleClickButton(id: number) {
-    setSelectedGenreId(id);
-  }
 
   useEffect(() => {
     api.get<GenreResponseProps[]>('genres').then(response => {
       setGenres(response.data);
     });
-  }, []);
+  }, []);  
 
-  useEffect(() => {
-    api.get<MovieProps[]>(`movies/?Genre_id=${selectedGenreId}`).then(response => {
-      setMovies(response.data);
-    });
-
-    api.get<GenreResponseProps>(`genres/${selectedGenreId}`).then(response => {
-      setSelectedGenre(response.data);
-    })
-  }, [selectedGenreId]);
-
-  return (
-    <>
+  return (    
      <nav className="sidebar">
         <span>Watch<p>Me</p></span>
-
         <div className="buttons-container">
           {genres.map(genre => (
             <Button
@@ -52,9 +36,6 @@ export function SideBar(props: GenreResponseProps) {
             />
           ))}
         </div>
-
-      </nav>
-    </>
-
+      </nav>    
   )
 }
